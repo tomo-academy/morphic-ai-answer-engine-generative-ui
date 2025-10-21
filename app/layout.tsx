@@ -31,10 +31,12 @@ export const metadata: Metadata = {
   description,
   icons: {
     icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
       { url: '/icon.png', sizes: '32x32', type: 'image/png' },
       { url: '/images/tomo-the-hub.png', sizes: '192x192', type: 'image/png' }
     ],
-    apple: { url: '/images/tomo-the-hub.png', sizes: '180x180', type: 'image/png' }
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    shortcut: '/icon.svg'
   },
   openGraph: {
     title,
@@ -67,7 +69,11 @@ export const viewport: Viewport = {
   minimumScale: 1,
   maximumScale: 5,
   userScalable: true,
-  viewportFit: 'cover'
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' }
+  ]
 }
 
 export default async function RootLayout({

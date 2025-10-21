@@ -128,12 +128,12 @@ export function ChatMessages({
         sections.length > 0 ? 'flex-1 overflow-y-auto' : ''
       )}
     >
-      <div className="relative mx-auto w-full max-w-3xl px-2 sm:px-4 md:px-6">
+      <div className="relative mx-auto w-full max-w-5xl px-1 sm:px-3 md:px-4 lg:px-6">
         {sections.map((section, sectionIndex) => (
           <div
             key={section.id}
             id={`section-${section.id}`}
-            className="chat-section mb-6 sm:mb-8"
+            className="chat-section mb-3 sm:mb-4 md:mb-6 lg:mb-8"
             style={
               sectionIndex === sections.length - 1
                 ? { minHeight: 'calc(-228px + 100dvh)' }
@@ -141,7 +141,7 @@ export function ChatMessages({
             }
           >
             {/* User message */}
-            <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <div className="flex flex-col gap-1 sm:gap-2 md:gap-3 lg:gap-4 mb-1 sm:mb-2 md:mb-3 lg:mb-4">
               <RenderMessage
                 message={section.userMessage}
                 messageId={section.userMessage.id}
@@ -158,7 +158,7 @@ export function ChatMessages({
 
             {/* Assistant messages */}
             {section.assistantMessages.map(assistantMessage => (
-              <div key={assistantMessage.id} className="flex flex-col gap-3 sm:gap-4">
+              <div key={assistantMessage.id} className="flex flex-col gap-1 sm:gap-2 md:gap-3 lg:gap-4">
                 <RenderMessage
                   message={assistantMessage}
                   messageId={assistantMessage.id}

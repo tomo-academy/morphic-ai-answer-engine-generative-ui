@@ -114,20 +114,20 @@ export function ChatPanel({
     <div
       className={cn(
         'w-full bg-background group/form-container shrink-0',
-        messages.length > 0 ? 'sticky bottom-0 px-2 pb-2 sm:pb-4' : 'px-4 sm:px-6'
+        messages.length > 0 ? 'sticky bottom-0 px-2 pb-2 sm:px-4 sm:pb-4' : 'px-3 sm:px-4 md:px-6'
       )}
     >
       {messages.length === 0 && (
-        <div className="mb-6 sm:mb-10 flex flex-col items-center gap-4 sm:gap-6">
+        <div className="mb-4 sm:mb-6 md:mb-10 flex flex-col items-center gap-3 sm:gap-4 md:gap-6">
           <div className="relative">
-            <IconLogo className="size-12 sm:size-16 drop-shadow-2xl" />
+            <IconLogo className="size-10 sm:size-12 md:size-16 drop-shadow-2xl" />
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-600/20 blur-xl animate-pulse"></div>
           </div>
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-in slide-in-from-bottom-4 duration-1000">
+          <div className="text-center space-y-1 sm:space-y-2">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-in slide-in-from-bottom-4 duration-1000">
               How can I help you today?
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground font-medium animate-in slide-in-from-bottom-6 duration-1000 delay-200">
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground font-medium animate-in slide-in-from-bottom-6 duration-1000 delay-200 px-4">
               Ask me anything and I&apos;ll provide intelligent, helpful responses
             </p>
           </div>
@@ -135,7 +135,7 @@ export function ChatPanel({
       )}
       <form
         onSubmit={handleSubmit}
-        className={cn('max-w-3xl w-full mx-auto relative')}
+        className={cn('max-w-4xl w-full mx-auto relative')}
       >
         {/* Scroll to bottom button - only shown when showScrollToBottomButton is true */}
         {showScrollToBottomButton && messages.length > 0 && (
@@ -151,7 +151,7 @@ export function ChatPanel({
           </Button>
         )}
 
-        <div className="relative flex flex-col w-full gap-1 sm:gap-2 bg-muted rounded-2xl sm:rounded-3xl border border-input">
+        <div className="relative flex flex-col w-full gap-1 sm:gap-2 bg-muted rounded-xl sm:rounded-2xl md:rounded-3xl border border-input">
           <Textarea
             ref={inputRef}
             name="input"
@@ -164,7 +164,7 @@ export function ChatPanel({
             spellCheck={false}
             value={input}
             disabled={isLoading || isToolInvocationInProgress()}
-            className="resize-none w-full min-h-10 sm:min-h-12 bg-transparent border-0 p-3 sm:p-4 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className="resize-none w-full min-h-12 sm:min-h-14 bg-transparent border-0 p-3 sm:p-4 text-sm sm:text-base placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             onChange={e => {
               handleInputChange(e)
               setShowEmptyScreen(e.target.value.length === 0)
