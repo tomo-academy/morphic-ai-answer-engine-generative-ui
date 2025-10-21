@@ -84,57 +84,79 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
   }
 
   return (
-    <div className="relative w-full font-sans codeblock bg-neutral-800">
-      <div className="flex items-center justify-between w-full px-6 py-1 pr-4 bg-neutral-700 text-zinc-100">
-        <span className="text-xs lowercase">{language}</span>
+    <div className="relative w-full font-sans codeblock bg-neutral-900 rounded-lg overflow-hidden border border-neutral-700 shadow-lg">
+      <div className="flex items-center justify-between w-full px-3 sm:px-6 py-2 pr-2 sm:pr-4 bg-gradient-to-r from-neutral-800 to-neutral-700 text-zinc-100 border-b border-neutral-600">
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+          </div>
+          <span className="text-xs font-medium uppercase tracking-wide text-neutral-300 hidden sm:inline">
+            {language}
+          </span>
+          <span className="text-xs font-medium uppercase tracking-wide text-neutral-300 sm:hidden">
+            {language.substring(0, 4)}
+          </span>
+        </div>
         <div className="flex items-center space-x-1">
           <Button
             variant="ghost"
-            className="focus-visible:ring-1"
+            className="focus-visible:ring-1 hover:bg-neutral-600 h-7 w-7 sm:h-8 sm:w-8"
             onClick={downloadAsFile}
             size="icon"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="sr-only">Download</span>
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="text-xs focus-visible:ring-1 focus-visible:ring-offset-0"
+            className="text-xs focus-visible:ring-1 focus-visible:ring-offset-0 hover:bg-neutral-600 h-7 w-7 sm:h-8 sm:w-8"
             onClick={onCopy}
           >
             {isCopied ? (
-              <Check className="w-4 h-4" />
+              <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" />
             ) : (
-              <Copy className="w-4 h-4" />
+              <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
             )}
             <span className="sr-only">Copy code</span>
           </Button>
         </div>
       </div>
-      <SyntaxHighlighter
-        language={language}
-        style={coldarkDark}
-        PreTag="div"
-        showLineNumbers
-        customStyle={{
-          margin: 0,
-          width: '100%',
-          background: 'transparent',
-          padding: '1.5rem 1rem'
-        }}
-        lineNumberStyle={{
-          userSelect: 'none'
-        }}
-        codeTagProps={{
-          style: {
-            fontSize: '0.9rem',
-            fontFamily: 'var(--font-mono)'
-          }
-        }}
-      >
-        {value}
-      </SyntaxHighlighter>
+      <div className="overflow-x-auto">
+        <SyntaxHighlighter
+          language={language}
+          style={coldarkDark}
+          PreTag="div"
+          showLineNumbers
+          customStyle={{
+            margin: 0,
+            width: '100%',
+            background: 'transparent',
+            padding: '1rem 0.75rem',
+            fontSize: '0.8rem',
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+          }}
+          lineNumberStyle={{
+            userSelect: 'none',
+            minWidth: '2.5rem',
+            paddingRight: '1rem',
+            color: '#6b7280',
+            fontSize: '0.75rem'
+          }}
+          codeTagProps={{
+            style: {
+              fontSize: '0.8rem',
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+              lineHeight: 1.5
+            }
+          }}
+          wrapLongLines={true}
+        >
+          {value}
+        </SyntaxHighlighter>
+      </div>
     </div>
   )
 })

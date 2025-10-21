@@ -38,10 +38,10 @@ export function CollapsibleMessage({
   return (
     <div className="flex">
       {showIcon && (
-        <div className="relative flex flex-col items-center">
-          <div className="w-5">
+        <div className="relative flex flex-col items-center shrink-0 mr-2 sm:mr-3">
+          <div className="w-4 sm:w-5">
             {role === 'assistant' ? (
-              <TomoAvatar />
+              <TomoAvatar className="size-4 sm:size-5" />
             ) : (
               <CurrentUserAvatar />
             )}
@@ -83,7 +83,7 @@ export function CollapsibleMessage({
         <div
           className={cn(
             'flex-1 rounded-2xl',
-            role === 'assistant' ? 'px-0' : 'px-3'
+            role === 'assistant' ? 'px-0' : 'px-2 sm:px-3'
           )}
         >
           {content}

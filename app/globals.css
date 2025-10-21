@@ -113,3 +113,44 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Improve touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent zoom on input focus on iOS */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+  
+  /* Better scrolling on mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Improve code block readability on mobile */
+  .codeblock pre {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+}
+
+/* Improve horizontal scrolling for code blocks */
+.codeblock {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Better text selection */
+::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Smooth scrolling for better UX */
+html {
+  scroll-behavior: smooth;
+}
