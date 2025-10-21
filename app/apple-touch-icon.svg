@@ -1,27 +1,30 @@
 <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <pattern id="tomoPatternLarge" patternUnits="userSpaceOnUse" width="180" height="180">
-      <image href="/images/tomo-the-hub.png" x="0" y="0" width="180" height="180" preserveAspectRatio="xMidYMid slice"/>
-    </pattern>
-    <filter id="dropShadowLarge" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.15)"/>
-    </filter>
-    <radialGradient id="gradLarge" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" style="stop-color:rgb(147,51,234);stop-opacity:0.05" />
-      <stop offset="100%" style="stop-color:rgb(59,130,246);stop-opacity:0.05" />
+    <radialGradient id="backgroundGradLarge" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#8B5CF6" />
+      <stop offset="100%" style="stop-color:#3B82F6" />
     </radialGradient>
     <linearGradient id="borderGradLarge" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:rgb(147,51,234);stop-opacity:0.2" />
-      <stop offset="100%" style="stop-color:rgb(59,130,246);stop-opacity:0.2" />
+      <stop offset="0%" style="stop-color:#A855F7" />
+      <stop offset="100%" style="stop-color:#3B82F6" />
     </linearGradient>
+    <filter id="dropShadowLarge" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(0,0,0,0.25)"/>
+    </filter>
   </defs>
   
-  <!-- Circular background with gradient -->
-  <circle cx="90" cy="90" r="88" fill="url(#gradLarge)" filter="url(#dropShadowLarge)"/>
+  <!-- Main circular background -->
+  <circle cx="90" cy="90" r="85" fill="url(#backgroundGradLarge)" filter="url(#dropShadowLarge)"/>
   
-  <!-- Circular image mask -->
-  <circle cx="90" cy="90" r="85" fill="url(#tomoPatternLarge)"/>
+  <!-- TOMO text -->
+  <text x="90" y="75" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="white">TOMO</text>
+  
+  <!-- AI text -->
+  <text x="90" y="105" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="rgba(255,255,255,0.8)">AI</text>
   
   <!-- Border ring -->
-  <circle cx="90" cy="90" r="88" fill="none" stroke="url(#borderGradLarge)" stroke-width="2"/>
+  <circle cx="90" cy="90" r="85" fill="none" stroke="url(#borderGradLarge)" stroke-width="3" opacity="0.8"/>
+  
+  <!-- Inner highlight -->
+  <circle cx="90" cy="90" r="75" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
 </svg>

@@ -32,10 +32,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
-      { url: '/images/tomo-the-hub.png', sizes: '192x192', type: 'image/png' }
+      { url: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' }
     ],
-    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    apple: { url: '/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
     shortcut: '/icon.svg'
   },
   openGraph: {
@@ -97,7 +96,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'min-h-screen flex flex-col font-sans antialiased overflow-x-hidden',
+          'min-h-screen flex flex-col font-sans antialiased overflow-x-hidden bg-background text-foreground selection:bg-blue-500/20',
           fontSans.variable
         )}
       >

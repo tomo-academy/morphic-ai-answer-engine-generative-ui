@@ -40,8 +40,8 @@ export function CollapsibleMessage({
     return (
       <div className="flex justify-end mb-3 sm:mb-4 md:mb-6 px-2 sm:px-0">
         <div className="flex max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[65%] items-end gap-2 sm:gap-3">
-          <div className="flex-1 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-2xl sm:rounded-3xl px-3 py-2 sm:px-4 sm:py-3 shadow-lg message-bubble">
-            <div className="text-sm sm:text-base leading-relaxed break-words">{children}</div>
+          <div className="flex-1 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 text-white rounded-2xl sm:rounded-3xl px-3 py-2 sm:px-4 sm:py-3 shadow-lg message-bubble">
+            <div className="text-sm sm:text-base leading-relaxed break-words user-message-content">{children}</div>
           </div>
           {showIcon && (
             <div className="relative flex flex-col items-center shrink-0 mb-1">
@@ -87,7 +87,7 @@ export function CollapsibleMessage({
               </div>
               <CollapsibleContent className="data-[state=closed]:animate-collapse-up data-[state=open]:animate-collapse-down">
                 <Separator className="my-3 sm:my-4 border-border/50" />
-                <div className="text-sm sm:text-base leading-relaxed prose prose-sm sm:prose-base max-w-none dark:prose-invert break-words">{children}</div>
+                <div className="text-sm sm:text-base leading-relaxed prose prose-sm sm:prose-base prose-gray dark:prose-invert max-w-none break-words ai-message-content">{children}</div>
               </CollapsibleContent>
             </Collapsible>
           </div>
@@ -108,7 +108,7 @@ export function CollapsibleMessage({
           </div>
         )}
         <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl sm:rounded-3xl px-3 py-2 sm:px-4 sm:py-3 shadow-lg border border-gray-200/50 dark:border-gray-700/50 message-bubble">
-          <div className="text-sm sm:text-base leading-relaxed prose prose-sm sm:prose-base max-w-none dark:prose-invert break-words">
+          <div className="text-sm sm:text-base leading-relaxed prose prose-sm sm:prose-base prose-gray dark:prose-invert max-w-none break-words ai-message-content">
             {children}
           </div>
         </div>
