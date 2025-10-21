@@ -1,21 +1,21 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
-function IconLogo({ className, ...props }: React.ComponentProps<'svg'>) {
+function IconLogo({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <svg
-      fill="currentColor"
-      viewBox="0 0 256 256"
-      role="img"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn('h-4 w-4', className)}
+    <div
+      className={cn('h-4 w-4 relative', className)}
       {...props}
     >
-      <circle cx="128" cy="128" r="128" fill="black"></circle>
-      <circle cx="102" cy="128" r="18" fill="white"></circle>
-      <circle cx="154" cy="128" r="18" fill="white"></circle>
-    </svg>
+      <Image
+        src="/images/tomo-the-hub.png"
+        alt="TOMO AI BUDDY Logo"
+        fill
+        className="object-contain"
+      />
+    </div>
   )
 }
 
