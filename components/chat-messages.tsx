@@ -124,8 +124,9 @@ export function ChatMessages({
       role="list"
       aria-roledescription="chat messages"
       className={cn(
-        'relative size-full pt-14',
-        sections.length > 0 ? 'flex-1 overflow-y-auto' : ''
+        'relative w-full h-full min-h-0 pt-14 pb-4',
+        sections.length > 0 ? 'flex-1 overflow-y-auto overflow-x-hidden' : '',
+        'scroll-smooth supports-[overflow:overlay]:overflow-y-overlay'
       )}
     >
       <div className="relative mx-auto w-full max-w-5xl px-1 sm:px-3 md:px-4 lg:px-6">

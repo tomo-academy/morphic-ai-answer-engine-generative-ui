@@ -31,11 +31,14 @@ export const metadata: Metadata = {
   description,
   icons: {
     icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' }
+      { url: '/apple-touch-icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/apple-touch-icon.png', sizes: '16x16', type: 'image/png' }
     ],
-    apple: { url: '/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
-    shortcut: '/icon.svg'
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    shortcut: '/apple-touch-icon.png',
+    other: [
+      { url: '/apple-touch-icon.png', sizes: '192x192', type: 'image/png' }
+    ]
   },
   openGraph: {
     title,
@@ -66,13 +69,14 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   minimumScale: 1,
-  maximumScale: 5,
-  userScalable: true,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#000000' }
-  ]
+  ],
+  colorScheme: 'light dark'
 }
 
 export default async function RootLayout({
@@ -96,7 +100,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'min-h-screen flex flex-col font-sans antialiased overflow-x-hidden bg-background text-foreground selection:bg-blue-500/20',
+          'min-h-screen min-h-[100dvh] flex flex-col font-sans antialiased overflow-x-hidden bg-background text-foreground selection:bg-blue-500/20 supports-[height:100dvh]:min-h-[100dvh]',
           fontSans.variable
         )}
       >
@@ -108,9 +112,9 @@ export default async function RootLayout({
         >
           <SidebarProvider defaultOpen={false}>
             <AppSidebar />
-            <div className="flex flex-col flex-1 min-w-0">
+            <div className="flex flex-col flex-1 min-w-0 min-h-screen min-h-[100dvh] supports-[height:100dvh]:min-h-[100dvh]">
               <Header user={user} />
-              <main className="flex flex-1 min-h-0 relative">
+              <main className="flex flex-1 min-h-0 relative bg-background">
                 <ArtifactRoot>{children}</ArtifactRoot>
               </main>
             </div>
