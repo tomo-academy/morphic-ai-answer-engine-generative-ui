@@ -8,7 +8,7 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 const externalLinks = [
   {
     name: 'X',
-    href: 'https://x.com/morphic_ai',
+    href: 'https://x.com/tomo_academy',
     icon: <SiX className="mr-2 h-4 w-4" />
   },
   {
@@ -18,7 +18,7 @@ const externalLinks = [
   },
   {
     name: 'GitHub',
-    href: 'https://git.new/morphic',
+    href: 'https://github.com/tomo-academy/morphic-ai-answer-engine-generative-ui',
     icon: <SiGithub className="mr-2 h-4 w-4" />
   }
 ]

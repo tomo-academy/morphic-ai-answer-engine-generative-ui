@@ -21,7 +21,7 @@ const fontSans = FontSans({
   variable: '--font-sans'
 })
 
-const title = 'Morphic'
+const title = 'TOMO AI BUDDY'
 const description =
   'A fully open-source AI-powered answer engine with a generative UI.'
 
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title,
     description,
     card: 'summary_large_image',
-    creator: '@miiura'
+    creator: '@tomo_academy'
   }
 }
 

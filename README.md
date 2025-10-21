@@ -1,4 +1,4 @@
-# Morphic
+# TOMO AI BUDDY
 
 An AI-powered search engine with a generative UI.
 
@@ -19,11 +19,11 @@ An AI-powered search engine with a generative UI.
 
 ## 🧪 Try v1.0.0 Beta
 
-Want to experience the next generation of Morphic? The v1.0.0 beta is now available at [beta.morphic.sh](https://beta.morphic.sh)!
+Want to experience the next generation of TOMO AI BUDDY? The v1.0.0 beta is now available at [beta.morphic.sh](https://beta.morphic.sh)!
 
 This major update includes exciting new features like advanced search modes, PostgreSQL database, enhanced UI, and much more. Learn more about what's new in [Issue #680](https://github.com/miurla/morphic/issues/680).
 
-Your feedback helps shape the future of Morphic!
+Your feedback helps shape the future of TOMO AI BUDDY!
 
 ## 🛠 Features
 
@@ -120,13 +120,13 @@ Models are configured in `public/config/models.json`. Each model requires its co
 Fork the repo to your Github account, then run the following command to clone the repo:
 
 ```bash
-git clone git@github.com:[YOUR_GITHUB_ACCOUNT]/morphic.git
+git clone git@github.com:[YOUR_GITHUB_ACCOUNT]/tomo-ai-buddy.git
 ```
 
 ### 2. Install dependencies
 
 ```bash
-cd morphic
+cd tomo-ai-buddy
 bun install
 ```
 
@@ -164,7 +164,7 @@ Visit http://localhost:3000 in your browser.
 
 ## 🌐 Deploy
 
-Host your own live version of Morphic with Vercel, Cloudflare Pages, or Docker.
+Host your own live version of TOMO AI BUDDY with Vercel, Cloudflare Pages, or Docker.
 
 ### Vercel
 
@@ -197,20 +197,20 @@ The default model configuration is located at `public/config/models.json`. For D
 
 ### Setting up the Search Engine in Your Browser
 
-If you want to use Morphic as a search engine in your browser, follow these steps:
+If you want to use TOMO AI BUDDY as a search engine in your browser, follow these steps:
 
 1. Open your browser settings.
 2. Navigate to the search engine settings section.
 3. Select "Manage search engines and site search".
 4. Under "Site search", click on "Add".
 5. Fill in the fields as follows:
-   - **Search engine**: Morphic
-   - **Shortcut**: morphic
+   - **Search engine**: TOMO AI BUDDY
+   - **Shortcut**: tomo-ai-buddy
    - **URL with %s in place of query**: `https://morphic.sh/search?q=%s`
 6. Click "Add" to save the new search engine.
-7. Find "Morphic" in the list of site search, click on the three dots next to it, and select "Make default".
+7. Find "TOMO AI BUDDY" in the list of site search, click on the three dots next to it, and select "Make default".
 
-This will allow you to use Morphic as your default search engine in the browser.
+This will allow you to use TOMO AI BUDDY as your default search engine in the browser.
 
 ## 💙 Sponsors
 
@@ -222,7 +222,7 @@ This project is proudly supported by:
 
 ## 👥 Contributing
 
-We welcome contributions to Morphic! Whether it's bug reports, feature requests, or pull requests, all contributions are appreciated.
+We welcome contributions to TOMO AI BUDDY! Whether it's bug reports, feature requests, or pull requests, all contributions are appreciated.
 
 Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
 
