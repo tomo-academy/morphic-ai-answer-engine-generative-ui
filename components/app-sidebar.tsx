@@ -24,9 +24,11 @@ export default function AppSidebar() {
   return (
     <Sidebar side="left" variant="sidebar" collapsible="offcanvas">
       <SidebarHeader className="flex flex-row justify-between items-center">
-        <Link href="/" className="flex items-center gap-2 px-2 py-3">
-          <IconLogo className={cn('size-5')} />
-          <span className="font-semibold text-sm">TOMO AI BUDDY</span>
+        <Link href="/" className="flex items-center gap-3 px-2 py-3 group hover:bg-accent/50 rounded-lg transition-all duration-300">
+          <IconLogo className={cn('size-6')} />
+          <span className="font-bold text-sm bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-300 tracking-wide">
+            TOMO AI BUDDY
+          </span>
         </Link>
         <SidebarTrigger />
       </SidebarHeader>

@@ -118,11 +118,19 @@ export function ChatPanel({
       )}
     >
       {messages.length === 0 && (
-        <div className="mb-6 sm:mb-10 flex flex-col items-center gap-3 sm:gap-4">
-          <IconLogo className="size-8 sm:size-12 text-muted-foreground" />
-          <p className="text-center text-xl sm:text-2xl md:text-3xl font-semibold">
-            How can I help you today?
-          </p>
+        <div className="mb-6 sm:mb-10 flex flex-col items-center gap-4 sm:gap-6">
+          <div className="relative">
+            <IconLogo className="size-12 sm:size-16 drop-shadow-2xl" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-600/20 blur-xl animate-pulse"></div>
+          </div>
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-in slide-in-from-bottom-4 duration-1000">
+              How can I help you today?
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground font-medium animate-in slide-in-from-bottom-6 duration-1000 delay-200">
+              Ask me anything and I'll provide intelligent, helpful responses
+            </p>
+          </div>
         </div>
       )}
       <form

@@ -21,9 +21,9 @@ const fontSans = FontSans({
   variable: '--font-sans'
 })
 
-const title = 'TOMO AI BUDDY'
+const title = '✨ TOMO AI BUDDY - Intelligent Assistant'
 const description =
-  'A fully open-source AI-powered answer engine with a generative UI.'
+  '🚀 Experience the future of AI conversation with TOMO AI BUDDY - Your intelligent, responsive, and stylish AI companion for all your questions and tasks.'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://morphic.sh'),
