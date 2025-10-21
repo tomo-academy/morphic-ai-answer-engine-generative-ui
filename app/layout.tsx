@@ -26,18 +26,38 @@ const description =
   '🚀 Experience the future of AI conversation with TOMO AI BUDDY - Your intelligent, responsive, and stylish AI companion for all your questions and tasks.'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://morphic.sh'),
+  metadataBase: new URL('https://chat.tomoacademy.site'),
   title,
   description,
+  icons: {
+    icon: [
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/tomo-the-hub.png', sizes: '192x192', type: 'image/png' }
+    ],
+    apple: { url: '/images/tomo-the-hub.png', sizes: '180x180', type: 'image/png' }
+  },
   openGraph: {
     title,
-    description
+    description,
+    url: 'https://chat.tomoacademy.site',
+    siteName: 'TOMO AI BUDDY',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'TOMO AI BUDDY - Intelligent Assistant'
+      }
+    ],
+    locale: 'en_US',
+    type: 'website'
   },
   twitter: {
     title,
     description,
     card: 'summary_large_image',
-    creator: '@tomo_academy'
+    creator: '@tomo_academy',
+    images: ['/opengraph-image.png']
   }
 }
 

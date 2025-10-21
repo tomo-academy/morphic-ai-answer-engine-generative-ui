@@ -19,7 +19,7 @@ An AI-powered search engine with a generative UI.
 
 ## 🧪 Try v1.0.0 Beta
 
-Want to experience the next generation of TOMO AI BUDDY? The v1.0.0 beta is now available at [beta.morphic.sh](https://beta.morphic.sh)!
+Want to experience the next generation of TOMO AI BUDDY? The application is now available at [chat.tomoacademy.site](https://chat.tomoacademy.site)!
 
 This major update includes exciting new features like advanced search modes, PostgreSQL database, enhanced UI, and much more. Learn more about what's new in [Issue #680](https://github.com/miurla/morphic/issues/680).
 
@@ -206,7 +206,7 @@ If you want to use TOMO AI BUDDY as a search engine in your browser, follow thes
 5. Fill in the fields as follows:
    - **Search engine**: TOMO AI BUDDY
    - **Shortcut**: tomo-ai-buddy
-   - **URL with %s in place of query**: `https://morphic.sh/search?q=%s`
+   - **URL with %s in place of query**: `https://chat.tomoacademy.site/search?q=%s`
 6. Click "Add" to save the new search engine.
 7. Find "TOMO AI BUDDY" in the list of site search, click on the three dots next to it, and select "Make default".
 
