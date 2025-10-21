@@ -1,13 +1,17 @@
 'use client'
 
 import Image from 'next/image'
+
 import { cn } from '@/lib/utils'
 
-function IconLogo({ className, ...props }: React.ComponentProps<'div'>) {
+interface IconLogoProps {
+  className?: string
+}
+
+function IconLogo({ className }: IconLogoProps) {
   return (
     <div
       className={cn('h-4 w-4 relative', className)}
-      {...props}
     >
       <Image
         src="/images/tomo-the-hub.png"
