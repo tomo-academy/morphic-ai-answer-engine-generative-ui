@@ -35,17 +35,17 @@ export function CollapsibleMessage({
 }: CollapsibleMessageProps) {
   const content = <div className="flex-1">{children}</div>
 
-  // ChatGPT-style layout: AI left, User right
+  // User messages (right-aligned)
   if (role === 'user') {
     return (
-      <div className="flex justify-end mb-3 sm:mb-4 md:mb-6 px-2 sm:px-0">
-        <div className="flex max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[65%] items-end gap-2 sm:gap-3">
-          <div className="flex-1 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 text-white rounded-2xl sm:rounded-3xl px-3 py-2 sm:px-4 sm:py-3 shadow-lg message-bubble">
+      <div className="flex justify-end mb-2 sm:mb-3 md:mb-4 px-1 sm:px-2">
+        <div className="flex max-w-[85%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[65%] items-end gap-1.5 sm:gap-2 md:gap-3">
+          <div className="flex-1 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 text-white rounded-xl sm:rounded-2xl md:rounded-3xl px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-3 shadow-lg message-bubble">
             <div className="text-sm sm:text-base leading-relaxed break-words user-message-content">{children}</div>
           </div>
           {showIcon && (
-            <div className="relative flex flex-col items-center shrink-0 mb-1">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full overflow-hidden ring-2 ring-blue-500/20">
+            <div className="relative flex flex-col items-center shrink-0 mb-0.5">
+              <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-full overflow-hidden ring-2 ring-blue-500/20">
                 <CurrentUserAvatar />
               </div>
             </div>
@@ -58,16 +58,16 @@ export function CollapsibleMessage({
   // AI messages (left-aligned) - handle collapsible case
   if (isCollapsible) {
     return (
-      <div className="flex justify-start mb-3 sm:mb-4 md:mb-6 px-2 sm:px-0">
-        <div className="flex max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] items-end gap-2 sm:gap-3">
+      <div className="flex justify-start mb-2 sm:mb-3 md:mb-4 px-1 sm:px-2">
+        <div className="flex max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] items-end gap-1.5 sm:gap-2 md:gap-3">
           {showIcon && (
-            <div className="relative flex flex-col items-center shrink-0 mb-1">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full overflow-hidden ring-2 ring-purple-500/20">
-                <TomoAvatar className="size-7 sm:size-8 md:size-9" />
+            <div className="relative flex flex-col items-center shrink-0 mb-0.5">
+              <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-full overflow-hidden ring-2 ring-purple-500/20">
+                <TomoAvatar className="size-6 sm:size-7 md:size-8 lg:size-9" />
               </div>
             </div>
           )}
-          <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-lg border border-gray-200/50 dark:border-gray-700/50 message-bubble">
+          <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl sm:rounded-2xl md:rounded-3xl p-2.5 sm:p-3 md:p-4 shadow-lg border border-gray-200/50 dark:border-gray-700/50 message-bubble">
             <Collapsible
               open={isOpen}
               onOpenChange={onOpenChange}
@@ -98,16 +98,16 @@ export function CollapsibleMessage({
 
   // AI messages (left-aligned) - regular case
   return (
-    <div className="flex justify-start mb-3 sm:mb-4 md:mb-6 px-2 sm:px-0">
-      <div className="flex max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] items-end gap-2 sm:gap-3">
+    <div className="flex justify-start mb-2 sm:mb-3 md:mb-4 px-1 sm:px-2">
+      <div className="flex max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] items-end gap-1.5 sm:gap-2 md:gap-3">
         {showIcon && (
-          <div className="relative flex flex-col items-center shrink-0 mb-1">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full overflow-hidden ring-2 ring-purple-500/20">
-              <TomoAvatar className="size-7 sm:size-8 md:size-9" />
+          <div className="relative flex flex-col items-center shrink-0 mb-0.5">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-full overflow-hidden ring-2 ring-purple-500/20">
+              <TomoAvatar className="size-6 sm:size-7 md:size-8 lg:size-9" />
             </div>
           </div>
         )}
-        <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl sm:rounded-3xl px-3 py-2 sm:px-4 sm:py-3 shadow-lg border border-gray-200/50 dark:border-gray-700/50 message-bubble">
+        <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl sm:rounded-2xl md:rounded-3xl px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-3 shadow-lg border border-gray-200/50 dark:border-gray-700/50 message-bubble">
           <div className="text-sm sm:text-base leading-relaxed prose prose-sm sm:prose-base prose-gray dark:prose-invert max-w-none break-words ai-message-content">
             {children}
           </div>
