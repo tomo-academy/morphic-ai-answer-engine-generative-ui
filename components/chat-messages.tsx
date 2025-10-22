@@ -124,20 +124,20 @@ export function ChatMessages({
       role="list"
       aria-roledescription="chat messages"
       className={cn(
-        'relative w-full h-full min-h-0 pt-14 pb-4',
+        'relative w-full h-full min-h-0 pt-12 sm:pt-14 pb-3 sm:pb-4',
         sections.length > 0 ? 'flex-1 overflow-y-auto overflow-x-hidden' : '',
         'scroll-smooth supports-[overflow:overlay]:overflow-y-overlay'
       )}
     >
-      <div className="relative mx-auto w-full max-w-5xl px-1 sm:px-3 md:px-4 lg:px-6">
+      <div className="relative mx-auto w-full max-w-5xl px-2 sm:px-3 md:px-4 lg:px-6">
         {sections.map((section, sectionIndex) => (
           <div
             key={section.id}
             id={`section-${section.id}`}
-            className="chat-section mb-3 sm:mb-4 md:mb-6 lg:mb-8"
+            className="chat-section mb-2 sm:mb-3 md:mb-4 lg:mb-6"
             style={
               sectionIndex === sections.length - 1
-                ? { minHeight: 'calc(-228px + 100dvh)' }
+                ? { minHeight: 'calc(-180px + 100dvh)' } // Adjusted
                 : {}
             }
           >
