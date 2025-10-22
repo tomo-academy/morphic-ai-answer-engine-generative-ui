@@ -99,8 +99,8 @@ html, body {
   
   /* Allow scrolling only in chat container */
   #scroll-container {
-    height: calc(100vh - 140px);
-    height: calc(100dvh - 140px);
+    height: calc(100vh - 120px); /* Reduced from 140px */
+    height: calc(100dvh - 120px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -121,8 +121,32 @@ html, body {
   }
   
   #scroll-container {
-    height: calc(100vh - 180px);
-    height: calc(100dvh - 180px);
+    height: calc(100vh - 160px); /* Reduced from 180px */
+    height: calc(100dvh - 160px);
+  }
+}
+
+/* Better mobile touch handling */
+@media (max-width: 768px) {
+  /* Improve tap targets */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent text size adjust on orientation change */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Better form control sizing */
+  input, textarea, select, button {
+    font-size: 16px;
+  }
+  
+  /* Prevent double-tap zoom */
+  * {
+    touch-action: manipulation;
   }
 }
 
