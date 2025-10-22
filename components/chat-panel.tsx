@@ -135,7 +135,7 @@ export function ChatPanel({
       )}
       <form
         onSubmit={handleSubmit}
-        className={cn('max-w-4xl w-full mx-auto relative')}
+        className={cn('max-w-4xl w-full mx-auto relative px-2 sm:px-0')}
       >
         {/* Scroll to bottom button - only shown when showScrollToBottomButton is true */}
         {showScrollToBottomButton && messages.length > 0 && (
@@ -151,7 +151,7 @@ export function ChatPanel({
           </Button>
         )}
 
-        <div className="relative flex flex-col w-full gap-1 sm:gap-2 bg-muted rounded-xl sm:rounded-2xl md:rounded-3xl border border-input">
+        <div className="relative flex flex-col w-full gap-1 sm:gap-2 bg-muted rounded-xl sm:rounded-2xl border border-input">
           <Textarea
             ref={inputRef}
             name="input"
@@ -164,7 +164,7 @@ export function ChatPanel({
             spellCheck={false}
             value={input}
             disabled={isLoading || isToolInvocationInProgress()}
-            className="resize-none w-full min-h-12 sm:min-h-14 bg-transparent border-0 p-3 sm:p-4 text-sm sm:text-base placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className="resize-none w-full min-h-10 sm:min-h-12 md:min-h-14 bg-transparent border-0 p-2.5 sm:p-3 md:p-4 text-sm sm:text-base placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             onChange={e => {
               handleInputChange(e)
               setShowEmptyScreen(e.target.value.length === 0)
@@ -190,7 +190,7 @@ export function ChatPanel({
           />
 
           {/* Bottom menu area */}
-          <div className="flex items-center justify-between p-2 sm:p-3">
+          <div className="flex items-center justify-between p-1.5 sm:p-2 md:p-3">
             <div className="flex items-center gap-1 sm:gap-2">
               <ModelSelector models={models || []} />
               <SearchModeToggle />
