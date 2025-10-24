@@ -33,8 +33,6 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useToast } from "@/components/ui/use-toast"
 import { IconLogo } from "./ui/icons"
 
 // Types
@@ -55,6 +53,36 @@ interface User {
   email: string
   billing: number
   admin: boolean
+}
+
+// Toast notification component (inline replacement for use-toast)
+function Toast({ title, description, variant, isVisible, onClose }: {
+  title: string
+  description?: string
+  variant?: "default" | "destructive"
+  isVisible: boolean
+  onClose: () => void
+}) {
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, onClose]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className={cn(
+      "fixed bottom-4 right-4 p-4 rounded-md shadow-lg z-50 max-w-sm",
+      variant === "destructive" ? "bg-destructive text-destructive-foreground" : "bg-background border"
+    )}>
+      <div className="font-semibold">{title}</div>
+      {description && <div className="text-sm mt-1">{description}</div>}
+    </div>
+  );
 }
 
 // Contexts
@@ -406,7 +434,7 @@ function SearchModal({
             />
           </div>
         </div>
-        <ScrollArea className="h-[300px] mt-4">
+        <div className="h-[300px] mt-4 overflow-y-auto">
           <div className="space-y-1">
             {filteredConversations.length > 0 ? (
               filteredConversations.map((conv) => (
@@ -432,7 +460,7 @@ function SearchModal({
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -442,7 +470,16 @@ function SearchModal({
 function MainSidebarContent() {
   const router = useRouter()
   const pathname = usePathname()
-  const { toast } = useToast()
+  const [toast, setToast] = useState<{
+    title: string
+    description?: string
+    variant?: "default" | "destructive"
+    isVisible: boolean
+  }>({
+    title: "",
+    isVisible: false
+  });
+  
   const { user } = useAuth()
   const { 
     conversations, 
@@ -469,6 +506,15 @@ function MainSidebarContent() {
   const longPressTimer = useRef<NodeJS.Timeout | null>(null)
   const contextMenuProtected = useRef(false)
   
+  const showToast = useCallback((title: string, description?: string, variant?: "default" | "destructive") => {
+    setToast({
+      title,
+      description,
+      variant,
+      isVisible: true
+    });
+  }, []);
+  
   const sortedConversations = useMemo(() => {
     return [...conversations].sort((a, b) => {
       if (a.starred && !b.starred) return -1;
@@ -490,17 +536,13 @@ function MainSidebarContent() {
   const handleNavigate = useCallback((conversation_id: string) => {
     const conv = conversations.find(c => c.conversation_id === conversation_id);
     if (!conv) {
-      toast({
-        title: "Error",
-        description: "Conversation does not exist.",
-        variant: "destructive"
-      });
+      showToast("Error", "Conversation does not exist.", "destructive");
       return;
     }
     
     const targetPath = conv.type === 'image' ? `/image/${conversation_id}` : `/chat/${conversation_id}`;
     router.push(targetPath);
-  }, [conversations, router, toast]);
+  }, [conversations, router, showToast]);
   
   const toggleStar = useCallback(async (conversation_id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -520,17 +562,13 @@ function MainSidebarContent() {
         throw new Error('Failed to toggle star');
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to toggle star.",
-        variant: "destructive"
-      });
+      showToast("Error", "Failed to toggle star.", "destructive");
       const conversation = conversations.find(c => c.conversation_id === conversation_id);
       if (conversation) {
         toggleStarConversation(conversation_id, conversation.starred);
       }
     }
-  }, [conversations, toggleStarConversation, toast]);
+  }, [conversations, toggleStarConversation, showToast]);
   
   const handleTouchStart = useCallback((e: React.TouchEvent, conversation_id: string) => {
     setContextMenu(prev => ({ ...prev, visible: false }));
@@ -594,13 +632,9 @@ function MainSidebarContent() {
         throw new Error('Failed to rename conversation');
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to rename conversation.",
-        variant: "destructive"
-      });
+      showToast("Error", "Failed to rename conversation.", "destructive");
     }
-  }, [updateConversation, toast]);
+  }, [updateConversation, showToast]);
   
   const handleDelete = useCallback(async (conversation_id: string) => {
     try {
@@ -617,13 +651,9 @@ function MainSidebarContent() {
         throw new Error('Failed to delete conversation');
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete conversation.",
-        variant: "destructive"
-      });
+      showToast("Error", "Failed to delete conversation.", "destructive");
     }
-  }, [deleteConversation, currentConversationId, router, toast]);
+  }, [deleteConversation, currentConversationId, router, showToast]);
   
   const handleRefresh = useCallback(() => {
     window.location.reload();
@@ -659,11 +689,7 @@ function MainSidebarContent() {
           throw new Error('Failed to delete conversations');
         }
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to delete conversations.",
-          variant: "destructive"
-        });
+        showToast("Error", "Failed to delete conversations.", "destructive");
       }
     } else if (modalAction === "logout") {
       try {
@@ -679,16 +705,12 @@ function MainSidebarContent() {
         
         router.push("/login");
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to logout.",
-          variant: "destructive"
-        });
+        showToast("Error", "Failed to logout.", "destructive");
       }
     }
     setModalOpen(false);
     setModalAction(null);
-  }, [modalAction, deleteAllConversations, router, toast]);
+  }, [modalAction, deleteAllConversations, router, showToast]);
   
   const handleNewConversation = useCallback(() => {
     router.push("/");
@@ -797,7 +819,7 @@ function MainSidebarContent() {
           <Separator />
           
           <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full">
+            <div className="h-full overflow-y-auto">
               <div className="p-2">
                 <h3 className="text-sm font-medium mb-2 px-2">Chat History</h3>
                 {isLoading ? (
@@ -833,7 +855,7 @@ function MainSidebarContent() {
                   </div>
                 )}
               </div>
-            </ScrollArea>
+            </div>
           </div>
           
           <Separator />
@@ -912,6 +934,14 @@ function MainSidebarContent() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      <Toast
+        title={toast.title}
+        description={toast.description}
+        variant={toast.variant}
+        isVisible={toast.isVisible}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+      />
     </>
   );
 }
