@@ -1,6 +1,9 @@
 "use client"
 
+// React imports
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, Suspense } from "react"
+
+// UI component imports
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -8,10 +11,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarRail, SidebarTrigger } from "@/components/ui/sidebar"
+
+// Utility and custom component imports
 import { cn } from "@/lib/utils"
 import { IconLogo } from "./ui/icons"
+
+// Next.js imports
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+
+// Icon imports
 import { AudioLines, Edit, Image, Menu, Plus, RefreshCw, Search, SquarePen, Star, Trash, UserCircle } from "lucide-react"
 
 // Types
