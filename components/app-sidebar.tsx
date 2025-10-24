@@ -1,39 +1,18 @@
 "use client"
 
-import { Suspense, useState, useRef, useEffect, useCallback, useMemo, createContext, useContext } from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { Plus, Search, SquarePen, AudioLines, Image, Star, Menu, UserCircle, RefreshCw, Edit, Trash } from "lucide-react"
-import { cn } from "@/lib/utils"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-  SidebarTrigger
-} from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, Suspense } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarRail, SidebarTrigger } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 import { IconLogo } from "./ui/icons"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import { AudioLines, Edit, Image, Menu, Plus, RefreshCw, Search, SquarePen, Star, Trash, UserCircle } from "lucide-react"
 
 // Types
 interface Conversation {
@@ -772,7 +751,7 @@ function MainSidebarContent() {
       <Sidebar side="left" variant="sidebar" collapsible="offcanvas">
         <SidebarHeader className="flex flex-row justify-between items-center">
           <Link href="/" className="flex items-center gap-3 px-2 py-3 group hover:bg-accent/50 rounded-lg transition-all duration-300">
-            <IconLogo className={cn('size-6')} />
+            <IconLogo className={cn('size-6')} alt="TOMO AI BUDDY Logo" />
             <span className="font-bold text-sm bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-300 tracking-wide">
               TOMO AI BUDDY
             </span>
