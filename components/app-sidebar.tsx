@@ -1,19 +1,20 @@
-// components/sidebar/main-sidebar.tsx
 "use client"
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react"
+import { Suspense, useState, useRef, useEffect, useCallback, useMemo, createContext, useContext } from "react"
+import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { 
-  Search, 
-  SquarePen, 
-  AudioLines, 
-  Image, 
-  Star, 
-  Menu, 
-  UserCircle,
-  RefreshCw
-} from "lucide-react"
+import { Plus, Search, SquarePen, AudioLines, Image, Star, Menu, UserCircle, RefreshCw, Edit, Trash } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  SidebarTrigger
+} from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { 
@@ -34,13 +35,411 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
-import { ConversationItem } from "./conversation-item"
-import { ContextMenu } from "./context-menu"
-import { SearchModal } from "./search-modal"
-import { useConversations } from "@/hooks/use-conversations"
-import { useAuth } from "@/hooks/use-auth"
+import { IconLogo } from "./ui/icons"
 
-export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: () => void }) {
+// Types
+interface Conversation {
+  conversation_id: string
+  alias: string
+  created_at: string
+  updated_at: string
+  starred: boolean
+  starred_at?: string
+  type: "chat" | "image"
+  isLoading?: boolean
+}
+
+interface User {
+  id: string
+  name: string
+  email: string
+  billing: number
+  admin: boolean
+}
+
+// Contexts
+const ConversationsContext = createContext<{
+  conversations: Conversation[]
+  isLoading: boolean
+  deleteConversation: (id: string) => void
+  deleteAllConversations: () => void
+  updateConversation: (id: string, alias: string) => void
+  toggleStarConversation: (id: string, starred: boolean) => void
+  refreshConversations: () => Promise<void>
+} | undefined>(undefined);
+
+const AuthContext = createContext<{
+  user: User | null
+  isLoading: boolean
+  refreshUser: () => Promise<void>
+} | undefined>(undefined);
+
+// Providers
+function ConversationsProvider({ children }: { children: React.ReactNode }) {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const refreshConversations = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/conversations");
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch conversations:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    refreshConversations();
+  }, []);
+  
+  const deleteConversation = (id: string) => {
+    setConversations(prev => prev.filter(conv => conv.conversation_id !== id));
+  };
+  
+  const deleteAllConversations = () => {
+    setConversations([]);
+  };
+  
+  const updateConversation = (id: string, alias: string) => {
+    setConversations(prev => 
+      prev.map(conv => 
+        conv.conversation_id === id ? { ...conv, alias } : conv
+      )
+    );
+  };
+  
+  const toggleStarConversation = (id: string, starred: boolean) => {
+    setConversations(prev => 
+      prev.map(conv => 
+        conv.conversation_id === id 
+          ? { ...conv, starred, starred_at: starred ? new Date().toISOString() : undefined } 
+          : conv
+      )
+    );
+  };
+  
+  return (
+    <ConversationsContext.Provider value={{
+      conversations,
+      isLoading,
+      deleteConversation,
+      deleteAllConversations,
+      updateConversation,
+      toggleStarConversation,
+      refreshConversations
+    }}>
+      {children}
+    </ConversationsContext.Provider>
+  );
+}
+
+function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const refreshUser = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/auth/me");
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    refreshUser();
+  }, []);
+  
+  return (
+    <AuthContext.Provider value={{ user, isLoading, refreshUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+// Hooks
+function useConversations() {
+  const context = useContext(ConversationsContext);
+  if (context === undefined) {
+    throw new Error("useConversations must be used within a ConversationsProvider");
+  }
+  return context;
+}
+
+function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+// Inline Components
+function ConversationItem({
+  conv,
+  currentConversationId,
+  renamingConversationId,
+  renameInputValue,
+  setRenameInputValue,
+  handleRename,
+  setRenamingConversationId,
+  handleNavigate,
+  handleConversationContextMenu,
+  handleTouchStart,
+  handleTouchEnd,
+  handleTouchMove,
+  toggleStar
+}: {
+  conv: Conversation
+  currentConversationId: string | null
+  renamingConversationId: string | null
+  renameInputValue: string
+  setRenameInputValue: (value: string) => void
+  handleRename: (id: string, value: string) => void
+  setRenamingConversationId: (id: string | null) => void
+  handleNavigate: (id: string) => void
+  handleConversationContextMenu: (e: React.MouseEvent, id: string) => void
+  handleTouchStart: (e: React.TouchEvent, id: string) => void
+  handleTouchEnd: (e: React.TouchEvent, id: string) => void
+  handleTouchMove: (e: React.TouchEvent) => void
+  toggleStar: (id: string, e?: React.MouseEvent) => void
+}) {
+  const isRenaming = renamingConversationId === conv.conversation_id;
+  const isActive = currentConversationId === conv.conversation_id;
+  
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-2 p-2 rounded-md cursor-pointer group",
+        isActive && "bg-accent",
+        "hover:bg-accent/50 transition-colors"
+      )}
+      onClick={() => !isRenaming && handleNavigate(conv.conversation_id)}
+      onContextMenu={(e) => handleConversationContextMenu(e, conv.conversation_id)}
+      onTouchStart={(e) => handleTouchStart(e, conv.conversation_id)}
+      onTouchEnd={(e) => handleTouchEnd(e, conv.conversation_id)}
+      onTouchMove={handleTouchMove}
+    >
+      {isRenaming ? (
+        <Input
+          value={renameInputValue}
+          onChange={(e) => setRenameInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleRename(conv.conversation_id, renameInputValue);
+            } else if (e.key === "Escape") {
+              setRenamingConversationId(null);
+              setRenameInputValue("");
+            }
+          }}
+          onBlur={() => {
+            if (renameInputValue.trim()) {
+              handleRename(conv.conversation_id, renameInputValue);
+            } else {
+              setRenamingConversationId(null);
+              setRenameInputValue("");
+            }
+          }}
+          autoFocus
+          className="h-8"
+        />
+      ) : (
+        <>
+          <div className="flex-1 truncate">
+            {conv.isLoading ? (
+              <span className="text-muted-foreground">Loading...</span>
+            ) : (
+              <span className="truncate">{conv.alias}</span>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity",
+              conv.starred && "opacity-100 text-yellow-500"
+            )}
+            onClick={(e) => toggleStar(conv.conversation_id, e)}
+          >
+            <Star className={cn("h-4 w-4", conv.starred && "fill-current")} />
+          </Button>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ContextMenu({
+  visible,
+  x,
+  y,
+  selectedConversationId,
+  conversations,
+  onAction,
+  onClose
+}: {
+  visible: boolean
+  x: number
+  y: number
+  selectedConversationId: string | null
+  conversations: Conversation[]
+  onAction: (action: string) => void
+  onClose: () => void
+}) {
+  useEffect(() => {
+    if (visible) {
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          onClose();
+        }
+      };
+      
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [visible, onClose]);
+  
+  if (!visible || !selectedConversationId) return null;
+  
+  const conversation = conversations.find(c => c.conversation_id === selectedConversationId);
+  if (!conversation) return null;
+  
+  return (
+    <div
+      className={cn(
+        "fixed z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+        "animate-in fade-in-0 zoom-in-95"
+      )}
+      style={{
+        left: `${x}px`,
+        top: `${y}px`,
+      }}
+    >
+      <div className="grid gap-1">
+        <button
+          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+          onClick={() => onAction("star")}
+        >
+          <Star className="mr-2 h-4 w-4" />
+          <span>{conversation.starred ? "Unstar" : "Star"}</span>
+        </button>
+        <button
+          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+          onClick={() => onAction("rename")}
+        >
+          <Edit className="mr-2 h-4 w-4" />
+          <span>Rename</span>
+        </button>
+        <button
+          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground text-red-600"
+          onClick={() => onAction("delete")}
+        >
+          <Trash className="mr-2 h-4 w-4" />
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SearchModal({
+  isOpen,
+  onClose,
+  conversations,
+  onSelectConversation
+}: {
+  isOpen: boolean
+  onClose: () => void
+  conversations: Conversation[]
+  onSelectConversation: (id: string) => void
+}) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([]);
+  
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredConversations(conversations);
+    } else {
+      const filtered = conversations.filter(conv =>
+        conv.alias.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredConversations(filtered);
+    }
+  }, [searchQuery, conversations]);
+  
+  useEffect(() => {
+    if (isOpen) {
+      setSearchQuery("");
+    }
+  }, [isOpen]);
+  
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Search Conversations</DialogTitle>
+        </DialogHeader>
+        <div className="flex items-center space-x-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search conversations..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8"
+              autoFocus
+            />
+          </div>
+        </div>
+        <ScrollArea className="h-[300px] mt-4">
+          <div className="space-y-1">
+            {filteredConversations.length > 0 ? (
+              filteredConversations.map((conv) => (
+                <div
+                  key={conv.conversation_id}
+                  className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-accent/50"
+                  onClick={() => {
+                    onSelectConversation(conv.conversation_id);
+                    onClose();
+                  }}
+                >
+                  <div className="flex-1 truncate">
+                    <span className="truncate">{conv.alias}</span>
+                  </div>
+                  {conv.starred && (
+                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-muted-foreground p-4">
+                No conversations found.
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Main Sidebar Component
+function MainSidebarContent() {
   const router = useRouter()
   const pathname = usePathname()
   const { toast } = useToast()
@@ -101,8 +500,7 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
     
     const targetPath = conv.type === 'image' ? `/image/${conversation_id}` : `/chat/${conversation_id}`;
     router.push(targetPath);
-    onToggle();
-  }, [conversations, router, onToggle, toast]);
+  }, [conversations, router, toast]);
   
   const toggleStar = useCallback(async (conversation_id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -112,7 +510,6 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
 
       toggleStarConversation(conversation_id, !conversation.starred);
       
-      // API call to toggle star
       const response = await fetch(`/api/conversations/${conversation_id}/star`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -128,7 +525,6 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
         description: "Failed to toggle star.",
         variant: "destructive"
       });
-      // Revert the change
       const conversation = conversations.find(c => c.conversation_id === conversation_id);
       if (conversation) {
         toggleStarConversation(conversation_id, conversation.starred);
@@ -188,7 +584,6 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
       setRenamingConversationId(null);
       setRenameInputValue("");
       
-      // API call to rename conversation
       const response = await fetch(`/api/conversations/${conversation_id}/rename`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -214,7 +609,6 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
         router.push("/");
       }
       
-      // API call to delete conversation
       const response = await fetch(`/api/conversations/${conversation_id}`, {
         method: 'DELETE'
       });
@@ -257,7 +651,6 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
         deleteAllConversations();
         router.push("/");
         
-        // API call to delete all conversations
         const response = await fetch("/api/conversations/all", {
           method: 'DELETE'
         });
@@ -274,7 +667,6 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
       }
     } else if (modalAction === "logout") {
       try {
-        // API call to logout
         const response = await fetch("/api/auth/logout", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -300,18 +692,15 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
   
   const handleNewConversation = useCallback(() => {
     router.push("/");
-    onToggle();
-  }, [router, onToggle]);
+  }, [router]);
   
   const handleRealtimeConversation = useCallback(() => {
     router.push("/realtime");
-    onToggle();
-  }, [router, onToggle]);
+  }, [router]);
   
   const handleImageGeneration = useCallback(() => {
     router.push("/image");
-    onToggle();
-  }, [router, onToggle]);
+  }, [router]);
   
   const handleConversationContextMenu = useCallback((e: React.MouseEvent, conversation_id: string) => {
     e.preventDefault();
@@ -356,143 +745,137 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
     return () => document.removeEventListener("click", handleClickOutsideContextMenu);
   }, [contextMenu.visible]);
   
-  useEffect(() => {
-    setIsSearchOpen(false);
-  }, [isOpen]);
-  
   return (
     <>
-      <div className={cn(
-        "flex flex-col h-full bg-background border-r transition-all duration-300",
-        isOpen ? "w-64" : "w-0 overflow-hidden"
-      )}>
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">AI</span>
-            </div>
-            <span className="font-bold">AI Chat</span>
+      <Sidebar side="left" variant="sidebar" collapsible="offcanvas">
+        <SidebarHeader className="flex flex-row justify-between items-center">
+          <Link href="/" className="flex items-center gap-3 px-2 py-3 group hover:bg-accent/50 rounded-lg transition-all duration-300">
+            <IconLogo className={cn('size-6')} />
+            <span className="font-bold text-sm bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-300 tracking-wide">
+              TOMO AI BUDDY
+            </span>
+          </Link>
+          <SidebarTrigger />
+        </SidebarHeader>
+        
+        <SidebarContent className="flex flex-col px-2 py-4 h-full">
+          <div className="p-2 space-y-2">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-2" 
+              onClick={() => setIsSearchOpen(true)}
+            >
+              <Search className="h-4 w-4" />
+              Search
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-2" 
+              onClick={handleNewConversation}
+            >
+              <SquarePen className="h-4 w-4" />
+              New Chat
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-2" 
+              onClick={handleRealtimeConversation}
+            >
+              <AudioLines className="h-4 w-4" />
+              Realtime Chat
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-2" 
+              onClick={handleImageGeneration}
+            >
+              <Image className="h-4 w-4" />
+              Image Generation
+            </Button>
           </div>
-          <Button variant="ghost" size="icon" onClick={onToggle}>
-            <Menu className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        <div className="p-2 space-y-2">
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2" 
-            onClick={() => setIsSearchOpen(true)}
-          >
-            <Search className="h-4 w-4" />
-            Search
-          </Button>
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2" 
-            onClick={handleNewConversation}
-          >
-            <SquarePen className="h-4 w-4" />
-            New Chat
-          </Button>
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2" 
-            onClick={handleRealtimeConversation}
-          >
-            <AudioLines className="h-4 w-4" />
-            Realtime Chat
-          </Button>
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2" 
-            onClick={handleImageGeneration}
-          >
-            <Image className="h-4 w-4" />
-            Image Generation
-          </Button>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            <div className="p-2">
-              <h3 className="text-sm font-medium mb-2 px-2">Chat History</h3>
-              {isLoading ? (
-                <div className="flex justify-center p-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  {sortedConversations.length > 0 ? (
-                    sortedConversations.map((conv) => (
-                      <ConversationItem
-                        key={conv.conversation_id}
-                        conv={conv}
-                        currentConversationId={currentConversationId}
-                        renamingConversationId={renamingConversationId}
-                        renameInputValue={renameInputValue}
-                        setRenameInputValue={setRenameInputValue}
-                        handleRename={handleRename}
-                        setRenamingConversationId={setRenamingConversationId}
-                        handleNavigate={handleNavigate}
-                        handleConversationContextMenu={handleConversationContextMenu}
-                        handleTouchStart={handleTouchStart}
-                        handleTouchEnd={handleTouchEnd}
-                        handleTouchMove={handleTouchMove}
-                        toggleStar={toggleStar}
-                      />
-                    ))
-                  ) : (
-                    <div className="text-center text-muted-foreground p-4">
-                      {conversations.length === 0 ? "No conversations yet." : "No search results."}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-        </div>
-        
-        <Separator />
-        
-        <div className="p-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="w-full justify-start gap-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback>
-                    <UserCircle className="h-4 w-4" />
-                  </AvatarFallback>
-                </Avatar>
-                <span className="truncate">{user?.name || "User"}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <div className="flex items-center justify-between p-2">
-                <span className="text-sm font-medium">Billing</span>
-                <span className="text-sm">${user?.billing?.toFixed(2) || "0.00"}</span>
+          
+          <Separator />
+          
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="p-2">
+                <h3 className="text-sm font-medium mb-2 px-2">Chat History</h3>
+                {isLoading ? (
+                  <div className="flex justify-center p-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    {sortedConversations.length > 0 ? (
+                      sortedConversations.map((conv) => (
+                        <ConversationItem
+                          key={conv.conversation_id}
+                          conv={conv}
+                          currentConversationId={currentConversationId}
+                          renamingConversationId={renamingConversationId}
+                          renameInputValue={renameInputValue}
+                          setRenameInputValue={setRenameInputValue}
+                          handleRename={handleRename}
+                          setRenamingConversationId={setRenamingConversationId}
+                          handleNavigate={handleNavigate}
+                          handleConversationContextMenu={handleConversationContextMenu}
+                          handleTouchStart={handleTouchStart}
+                          handleTouchEnd={handleTouchEnd}
+                          handleTouchMove={handleTouchMove}
+                          toggleStar={toggleStar}
+                        />
+                      ))
+                    ) : (
+                      <div className="text-center text-muted-foreground p-4">
+                        {conversations.length === 0 ? "No conversations yet." : "No search results."}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-              <DropdownMenuItem onClick={handleRefresh}>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                <span>Refresh</span>
-              </DropdownMenuItem>
-              {user?.admin && (
-                <DropdownMenuItem onClick={handleAdminClick}>
-                  <span>User Management</span>
+            </ScrollArea>
+          </div>
+          
+          <Separator />
+          
+          <div className="p-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start gap-2">
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback>
+                      <UserCircle className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="truncate">{user?.name || "User"}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="flex items-center justify-between p-2">
+                  <span className="text-sm font-medium">Billing</span>
+                  <span className="text-sm">${user?.billing?.toFixed(2) || "0.00"}</span>
+                </div>
+                <DropdownMenuItem onClick={handleRefresh}>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <span>Refresh</span>
                 </DropdownMenuItem>
-              )}
-              <DropdownMenuItem onClick={handleDeleteAll}>
-                <span>Delete All Conversations</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogoutClick} className="text-red-600">
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+                {user?.admin && (
+                  <DropdownMenuItem onClick={handleAdminClick}>
+                    <span>User Management</span>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleDeleteAll}>
+                  <span>Delete All Conversations</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogoutClick} className="text-red-600">
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
       
       <SearchModal
         isOpen={isSearchOpen}
@@ -530,5 +913,16 @@ export function MainSidebar({ isOpen, onToggle }: { isOpen: boolean, onToggle: (
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+// Main Export with Providers
+export default function AppSidebar() {
+  return (
+    <AuthProvider>
+      <ConversationsProvider>
+        <MainSidebarContent />
+      </ConversationsProvider>
+    </AuthProvider>
   );
 }
